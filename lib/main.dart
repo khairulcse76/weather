@@ -5,7 +5,6 @@ import 'package:weather/Activity/splash_activity.dart';
 
 void main() {
   runApp(const MyApp());
-
 }
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

@@ -53,12 +53,12 @@ class WeatherJsonAPIData {
       description = getDescription;
       icon = getIcon;
     }catch(e){
-      temp = "Error Occurs!! Check your City Name";
-      humidity = "Error Occurs!! Check your City Name";
-      speed = "Error Occurs!! Check your City Name";
-      main = "Error Occurs!! Check your City Name";
-      description = "Error Occurs!! Check your City Name";
-      icon = "Error Occurs!! Icon Not Found";
+      temp = "N/A";
+      humidity = "0.0";
+      speed = "0.0";
+      main = "Not found";
+      description = "Not found";
+      icon = "01n";
     }
   }
   //}catch(){

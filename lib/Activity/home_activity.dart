@@ -18,10 +18,12 @@ class _HomeActivityState extends State<HomeActivity> {
  String? temperature = 'loading....!!';
  String location = 'loading....!!';
  String airSpeed = '';
+ String humidity = '';
  String description = 'loading....!!';
  String mainDescription = 'loading....!!';
  String weatherIcon = '01d';
  String searchCity = 'Dhaka';
+ String? notFound;
 
 
  TextEditingController searchCityCtrl = TextEditingController();
@@ -41,6 +43,16 @@ class _HomeActivityState extends State<HomeActivity> {
           description=instance.description!;
           mainDescription=instance.main!;
           weatherIcon=instance.icon!;
+          humidity=instance.humidity!;
+          notFound='';
+          if(instance.temp=='N/A'){
+            description='Loading....';
+            location='Loading....';
+            weatherIcon='01d';
+            notFound='City Not Found';
+          }
+
+
           if (kDebugMode) {
             print("WeatherIcon: $weatherIcon");
           }
@@ -107,10 +119,14 @@ class _HomeActivityState extends State<HomeActivity> {
                       children: [
                         GestureDetector(
                           onTap: (){
-                            setState(() {
-                              startGettingData();
-                            });
-                            print(searchCityCtrl.text);
+                            if((searchCityCtrl.text).replaceAll(" ", "") ==""){
+                              //print('Search Blank');
+                            }else{
+                              setState(() {
+                                startGettingData();
+                              });
+                              searchCityCtrl.clear();
+                            }
                           },
                           child: Container(
                             //margin: EdgeInsets.only(left:5, right: 20),
@@ -125,12 +141,21 @@ class _HomeActivityState extends State<HomeActivity> {
                                 border: InputBorder.none,
                                 hintText: 'Please search City like $city ',
                               ),
+                              onEditingComplete: (){
+                                if((searchCityCtrl.text).replaceAll(" ", "") ==""){
+                                  //print('Search Blank');
+                                }else{
+                                  setState(() {
+                                    startGettingData();
+                                    searchCityCtrl.clear();
+                                  });
+                                }
+                              },
                             )
                         ),
                       ],
                     ),
                   ),const SizedBox(height: 10,),
-
                   Row( // Container 1
                     children: [
                       Expanded(
@@ -149,7 +174,9 @@ class _HomeActivityState extends State<HomeActivity> {
                                   Image.network("https://openweathermap.org/img/wn/$weatherIcon@2x.png", width: 100, height: 100, scale: 1.0,),
                                   Column(
                                     children: [
-                                       Text('$description Clouds', style: const TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                                      notFound == '' ?
+                                      Text("$description Clouds", style: const TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.bold))
+                                     : Text('$notFound ', style: const TextStyle(color: Colors.red,fontSize: 18, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
                                       Text('In $location', style: const TextStyle(color: Colors.black,fontSize: 16),textAlign: TextAlign.center,)
                                     ],
                                   )
@@ -215,7 +242,7 @@ class _HomeActivityState extends State<HomeActivity> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 15, top: 10,),
                                 child: Row(
                                   children: [
@@ -227,9 +254,8 @@ class _HomeActivityState extends State<HomeActivity> {
                                   ],
                                 ),
                               ),
-                              Text(double.tryParse(airSpeed)?.toStringAsFixed(2) ?? '0.0', style: TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                              Text('Km/hr', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
-
+                              Text(double.tryParse(airSpeed)?.toStringAsFixed(2) ?? '0.0', style: const TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                              const Text('Km/hr', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
                             ],
                           ),
                         ),
@@ -244,10 +270,10 @@ class _HomeActivityState extends State<HomeActivity> {
                             color: Colors.white60,
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          child: const Column(
+                          child:  Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Padding(
+                              const Padding(
                                 padding: EdgeInsets.only(left: 15, top: 10,),
                                 child: Row(
                                   children: [
@@ -259,14 +285,15 @@ class _HomeActivityState extends State<HomeActivity> {
                                   ],
                                 ),
                               ),
-                              Text('20.3', style: TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                              Text('percent', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
+                              Text(double.tryParse(humidity)?.toStringAsFixed(2) ?? '0.0', style: const TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                              const Text('percent', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
+                  SizedBox(height: 30,),
                   Container(
                     padding: const EdgeInsets.all(30),
                     child: const Column(
