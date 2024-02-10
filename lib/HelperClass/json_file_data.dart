@@ -3,12 +3,14 @@ import 'package:http/http.dart' as http;
 
 class WeatherJsonAPIData {
   WeatherJsonAPIData(
-      {required this.location,
+      {this.location = 'Dhaka',
         this.main,
       this.description,
       this.temp,
       this.humidity,
-      this.speed});
+      this.speed,
+      this.icon,
+      });
 
   String location;
   String? main;
@@ -16,6 +18,7 @@ class WeatherJsonAPIData {
   String? temp;
   String? humidity;
   String? speed;
+  String? icon;
 
   //try{
   Future<void> getData() async {
@@ -30,6 +33,7 @@ class WeatherJsonAPIData {
       Map weatherMap = weatherDataList[0];
       String getMain = weatherMap['main'];
       String getDescription = weatherMap['description'];
+      String getIcon = weatherMap['icon'];
 
       // Get Temp Information
       Map mainMap = data['main'];
@@ -47,12 +51,14 @@ class WeatherJsonAPIData {
       speed = getAirSpeed;
       main = getMain;
       description = getDescription;
+      icon = getIcon;
     }catch(e){
       temp = "Error Occurs!! Check your City Name";
       humidity = "Error Occurs!! Check your City Name";
       speed = "Error Occurs!! Check your City Name";
       main = "Error Occurs!! Check your City Name";
       description = "Error Occurs!! Check your City Name";
+      icon = "Error Occurs!! Icon Not Found";
     }
   }
   //}catch(){
