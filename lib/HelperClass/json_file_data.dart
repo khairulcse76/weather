@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 class WeatherJsonAPIData {
   WeatherJsonAPIData(
-      {this.location = 'Dhaka',
+      { required this.location,
         this.main,
       this.description,
       this.temp,

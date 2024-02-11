@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:weather/HelperClass/json_file_data.dart';
 import 'package:weather_icons/weather_icons.dart';
 import 'package:weather/main.dart';
+
 class HomeActivity extends StatefulWidget {
   const HomeActivity({super.key});
 
@@ -14,62 +15,75 @@ class HomeActivity extends StatefulWidget {
 }
 
 class _HomeActivityState extends State<HomeActivity> {
+  String? temperature = 'loading....!!';
+  String location = 'loading....!!';
+  String airSpeed = '';
+  String humidity = '';
+  String description = 'loading....!!';
+  String mainDescription = 'loading....!!';
+  String weatherIcon = '01d';
+  String searchCity = 'Dhaka';
+  String? notFound;
+  var locationbtn='';
 
- String? temperature = 'loading....!!';
- String location = 'loading....!!';
- String airSpeed = '';
- String humidity = '';
- String description = 'loading....!!';
- String mainDescription = 'loading....!!';
- String weatherIcon = '01d';
- String searchCity = 'Dhaka';
- String? notFound;
 
+  TextEditingController searchCityCtrl = TextEditingController();
 
- TextEditingController searchCityCtrl = TextEditingController();
 
   void startGettingData() async {
-    WeatherJsonAPIData instance;
-    if(searchCityCtrl.text !=null && searchCityCtrl.text.isNotEmpty){
+    WeatherJsonAPIData instance = WeatherJsonAPIData(location: searchCity);
+    if (searchCityCtrl.text != null && searchCityCtrl.text.isNotEmpty) {
       instance = WeatherJsonAPIData(location: searchCityCtrl.text);
-    }else{
+    } else {
       instance = WeatherJsonAPIData(location: searchCity);
     }
     await instance.getData();
-        setState(() {
-          temperature=instance.temp!;
-          location=instance.location;
-          airSpeed=instance.speed!;
-          description=instance.description!;
-          mainDescription=instance.main!;
-          weatherIcon=instance.icon!;
-          humidity=instance.humidity!;
-          notFound='';
-          if(instance.temp=='N/A'){
-            description='Loading....';
-            location='Loading....';
-            weatherIcon='01d';
-            notFound='City Not Found';
-          }
+    setState(() {
+      temperature = instance.temp!;
+      location = instance.location;
+      airSpeed = instance.speed!;
+      description = instance.description!;
+      mainDescription = instance.main!;
+      weatherIcon = instance.icon!;
+      humidity = instance.humidity!;
+      notFound = '';
+      if (instance.temp == 'N/A') {
+        description = 'Loading....';
+        location = 'Loading....';
+        weatherIcon = '01d';
+        notFound = 'City Not Found';
+      }
 
-
-          if (kDebugMode) {
-            print("WeatherIcon: $weatherIcon");
-          }
-        });
+      /*if (kDebugMode) {
+        print("Location from button: ${instance.location}");
+      }*/
+    });
   }
 
   @override
   void initState() {
     super.initState();
     startGettingData();
+    //getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
-    var cityName=['Dhaka', 'Chattogram', 'Khulna', 'Sylhet', 'Rajshahi', 'Mymensingh', 'Rangpur', 'Barisal', 'Camilla', 'Gazipur','Narayanganj'];
-    final _random=Random();
-    var city=cityName[_random.nextInt(cityName.length)];
+    var cityName = [
+      'Dhaka',
+      'Chittagong',
+      'Khulna',
+      'Sylhet',
+      'Rajshahi',
+      'Mymensingh',
+      'Rangpur',
+      'Barisal',
+      'Camilla',
+      'Gazipur',
+      'Narayanganj'
+    ];
+    final _random = Random();
+    var city = cityName[_random.nextInt(cityName.length)];
 
     return Scaffold(
       appBar: PreferredSize(
@@ -80,48 +94,53 @@ class _HomeActivityState extends State<HomeActivity> {
           //centerTitle: true,
         ),
       ),
-      backgroundColor:Colors.blueGrey.shade50,
+      backgroundColor: Colors.blueGrey.shade50,
       body: SafeArea(
         child: Center(
-          child: Container( //Main Container
+          child: Container(
+            //Main Container
             width: double.infinity,
             height: double.infinity,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   //tops: [0.1, 0.2,0.3,0.9,],
                   colors: [
                     Colors.lightBlue,
                     Colors.lightBlueAccent,
-                  ]
-              ),
+                  ]),
             ),
-            constraints: const BoxConstraints(
-              maxWidth: 800
-            ),
+            constraints: const BoxConstraints(maxWidth: 800),
 
             child: SingleChildScrollView(
               child: Column(
                 //crossAxisAlignment: CrossAxisAlignment.baseline,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const SizedBox(height: 10,),
-                  Container( //search box
-                    padding: const EdgeInsets.symmetric(horizontal: 30, ),
-                    margin: const EdgeInsets.symmetric(horizontal: 15.0,),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:BorderRadius.all(Radius.circular(30))
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    //search box
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
                     ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 15.0,
+                    ),
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(30))),
                     //Search Box Row
-                    child:   Row(
+                    child: Row(
                       children: [
                         GestureDetector(
-                          onTap: (){
-                            if((searchCityCtrl.text).replaceAll(" ", "") ==""){
+                          onTap: () {
+                            if ((searchCityCtrl.text).replaceAll(" ", "") ==
+                                "") {
                               //print('Search Blank');
-                            }else{
+                            } else {
                               setState(() {
                                 startGettingData();
                               });
@@ -129,55 +148,132 @@ class _HomeActivityState extends State<HomeActivity> {
                             }
                           },
                           child: Container(
-                            //margin: EdgeInsets.only(left:5, right: 20),
-                            margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                              //margin: EdgeInsets.only(left:5, right: 20),
+                              margin: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                               //padding: EdgeInsets.only(right:10),
-                              child: const Icon(FontAwesomeIcons.search, color: Colors.blue,)),
+                              child: const Icon(
+                                FontAwesomeIcons.search,
+                                color: Colors.blue,
+                              )),
                         ),
-                         Expanded(
+                        Expanded(
                             child: TextField(
-                              controller: searchCityCtrl,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Please search City like $city ',
-                              ),
-                              onEditingComplete: (){
-                                if((searchCityCtrl.text).replaceAll(" ", "") ==""){
-                                  //print('Search Blank');
-                                }else{
-                                  setState(() {
-                                    startGettingData();
-                                    searchCityCtrl.clear();
-                                  });
-                                }
-                              },
-                            )
-                        ),
+                          controller: searchCityCtrl,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Search your city like $city ',
+                          ),
+                          onEditingComplete: () {
+                            if ((searchCityCtrl.text).replaceAll(" ", "") ==
+                                "") {
+                              //print('Search Blank');
+                            } else {
+                              setState(() {
+                                startGettingData();
+                                searchCityCtrl.clear();
+                              });
+                            }
+                          },
+                        )),
                       ],
                     ),
-                  ),const SizedBox(height: 10,),
-                  Row( // Container 1
+                  ),
+                  Row(
+                    // Container 1
                     children: [
                       Expanded(
                         child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+                          /*margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 1.0),
+                          padding: const EdgeInsets.symmetric(vertical: 5),*/
+                          decoration: const BoxDecoration(
+                            //color: Colors.white70,
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10, right: 10),
+                                  child: Row(
+                                    children: [
+                                      MyoutlineButton('Dhaka'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Chittagong'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Khulna'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Rangpur'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Sylhet'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Rajshahi'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Camilla'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Mymensingh'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Barisal'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Gazipur'),
+                                      const SizedBox(width: 5,),
+                                      MyoutlineButton('Narayanganj'),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    // Container 2
+                    children: [
+                      Expanded(
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 1.0),
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           decoration: const BoxDecoration(
                             color: Colors.white70,
                             borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
-                          child:  Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Row(
                                 children: [
-                                  Image.network("https://openweathermap.org/img/wn/$weatherIcon@2x.png", width: 100, height: 100, scale: 1.0,),
+                                  Image.network(
+                                    "https://openweathermap.org/img/wn/$weatherIcon@2x.png",
+                                    width: 100,
+                                    height: 100,
+                                    scale: 1.0,
+                                  ),
                                   Column(
                                     children: [
-                                      notFound == '' ?
-                                      Text("$description Clouds", style: const TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.bold))
-                                     : Text('$notFound ', style: const TextStyle(color: Colors.red,fontSize: 18, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                      Text('In $location', style: const TextStyle(color: Colors.black,fontSize: 16),textAlign: TextAlign.center,)
+                                      notFound == ''
+                                          ? Text("$description Clouds",
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold))
+                                          : Text(
+                                              '$notFound ',
+                                              style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                      Text(
+                                        'In $location',
+                                        style: const TextStyle(
+                                            color: Colors.black, fontSize: 16),
+                                        textAlign: TextAlign.center,
+                                      )
                                     ],
                                   )
                                 ],
@@ -194,32 +290,54 @@ class _HomeActivityState extends State<HomeActivity> {
                       Expanded(
                         child: Container(
                           height: 280,
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           decoration: const BoxDecoration(
                             color: Colors.white60,
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          child:  Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const Padding(
                                 padding: EdgeInsets.all(15.0),
                                 child: Row(
                                   children: [
-                                    Icon(WeatherIcons.thermometer, size: 40,color: Colors.black,),
+                                    Icon(
+                                      WeatherIcons.thermometer,
+                                      size: 40,
+                                      color: Colors.black,
+                                    ),
                                   ],
                                 ),
                               ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(double.tryParse(temperature!)?.toStringAsFixed(2) ?? '0.0', style: TextStyle(color: Colors.black,fontSize: 80, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                    SizedBox(width: 10,),
-                                    Text('C', style: TextStyle(color: Colors.black,fontSize: 30, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                                  ],
-                                ),
-
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    double.tryParse(temperature!)
+                                            ?.toStringAsFixed(2) ??
+                                        '0.0',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 80,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    'C',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -233,7 +351,8 @@ class _HomeActivityState extends State<HomeActivity> {
                       Expanded(
                         child: Container(
                           height: 150,
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           decoration: const BoxDecoration(
                             color: Colors.white60,
@@ -243,19 +362,43 @@ class _HomeActivityState extends State<HomeActivity> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const Padding(
-                                padding: EdgeInsets.only(left: 15, top: 10,),
+                                padding: EdgeInsets.only(
+                                  left: 15,
+                                  top: 10,
+                                ),
                                 child: Row(
                                   children: [
-                                    Icon(WeatherIcons.day_windy, size: 30,color: Colors.black,),
+                                    Icon(
+                                      WeatherIcons.day_windy,
+                                      size: 30,
+                                      color: Colors.black,
+                                    ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 20,),
+                                      padding: EdgeInsets.only(
+                                        left: 20,
+                                      ),
                                       child: Text('Air Speed'),
                                     ),
                                   ],
                                 ),
                               ),
-                              Text(double.tryParse(airSpeed)?.toStringAsFixed(2) ?? '0.0', style: const TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                              const Text('Km/hr', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
+                              Text(
+                                double.tryParse(airSpeed)?.toStringAsFixed(2) ??
+                                    '0.0',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const Text(
+                                'Km/hr',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
                         ),
@@ -264,42 +407,72 @@ class _HomeActivityState extends State<HomeActivity> {
                       Expanded(
                         child: Container(
                           height: 150,
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 10.0),
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           decoration: const BoxDecoration(
                             color: Colors.white60,
                             borderRadius: BorderRadius.all(Radius.circular(20)),
                           ),
-                          child:  Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               const Padding(
-                                padding: EdgeInsets.only(left: 15, top: 10,),
+                                padding: EdgeInsets.only(
+                                  left: 15,
+                                  top: 10,
+                                ),
                                 child: Row(
                                   children: [
-                                    Icon(WeatherIcons.humidity, size: 30,color: Colors.black,),
+                                    Icon(
+                                      WeatherIcons.humidity,
+                                      size: 30,
+                                      color: Colors.black,
+                                    ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 20, top: 10),
+                                      padding:
+                                          EdgeInsets.only(left: 20, top: 10),
                                       child: Text('Humidity'),
                                     ),
                                   ],
                                 ),
                               ),
-                              Text(double.tryParse(humidity)?.toStringAsFixed(2) ?? '0.0', style: const TextStyle(color: Colors.black,fontSize: 40, fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
-                              const Text('percent', style: TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.normal),textAlign: TextAlign.center,),
+                              Text(
+                                double.tryParse(humidity)?.toStringAsFixed(2) ??
+                                    '0.0',
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const Text(
+                                'percent',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Container(
                     padding: const EdgeInsets.all(30),
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text('Made by: SMK', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                        Text(
+                          'Made by: SMK',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         Text('Data Providing by: OpenWeather.com'),
                       ],
                     ),
@@ -311,5 +484,43 @@ class _HomeActivityState extends State<HomeActivity> {
         ),
       ),
     );
+  }
+
+  // Future<void> getLocation() async{
+  //   try {
+  //     Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high,
+  //     );
+  //     print("Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+  //   } catch (e) {
+  //     print("Error getting location: $e");
+  //   }
+  // }
+
+  OutlinedButton MyoutlineButton(
+    String buttonTxt,
+  ) {
+    return OutlinedButton(
+        onPressed: () {
+          setState(() {
+            searchCity=buttonTxt;
+            startGettingData();
+          });
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.white70),
+            foregroundColor: MaterialStateProperty.all(Colors.black),
+            padding: MaterialStateProperty.all(
+              const EdgeInsets.all(8.0),
+            ),
+            elevation: MaterialStateProperty.all(20),
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                side: BorderSide(width: 1, color: Colors.red))),
+          textStyle: MaterialStateProperty.all(
+              const TextStyle(fontSize: 14)
+          )
+        ),
+        child: Text('$buttonTxt'));
   }
 }
