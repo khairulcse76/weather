@@ -460,7 +460,7 @@ class _HomeActivityState extends State<HomeActivity> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Container(
