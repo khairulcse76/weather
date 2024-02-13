@@ -255,7 +255,7 @@ class _HomeActivityState extends State<HomeActivity> {
                                   Column(
                                     children: [
                                       notFound == ''
-                                          ? Text("$description Clouds",
+                                          ? Text(description,
                                               style: const TextStyle(
                                                   color: Colors.black,
                                                   fontSize: 18,
@@ -319,16 +319,16 @@ class _HomeActivityState extends State<HomeActivity> {
                                     double.tryParse(temperature!)
                                             ?.toStringAsFixed(2) ??
                                         '0.0',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 80,
                                         fontWeight: FontWeight.bold),
                                     textAlign: TextAlign.center,
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 10,
                                   ),
-                                  Text(
+                                  const Text(
                                     'C',
                                     style: TextStyle(
                                         color: Colors.black,
